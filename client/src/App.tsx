@@ -1,18 +1,12 @@
-import { use, useState } from 'react'
+import { useState } from 'react'
 import './App.css'
-
-type User = {
-  id : string,
-  name: string,
-  username: string,
-  roles: string[]
-}
 
 function App() {
   const [user, setUser] = useState<User | null>(null)
 
+  // Simulate user authentication and fetch user data from the server
   const signIn = async (formData: FormData) => {
-    const userName = formData.get('userName')
+    const username = formData.get('username')
 
     try {
       const response = await fetch('api/signin', {
@@ -20,12 +14,8 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userName }),
+        body: JSON.stringify({ username }),
       })
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
 
       const data = await response.json()
       setUser(data)
@@ -34,49 +24,46 @@ function App() {
     }
   }
 
-  const ViewOnlyComponent = () => {
+  // Simulate user logout by clearing the user state
+  const signOut = () => {
+    setUser(null)
+  }
+
+  const Permission1Component = () => {
     return (
       <div>
-        <h2>View Only Content</h2>
-        <p>This content is only visible to users with the "viewOnly" role.</p>
+        <h2>Permission 1 Content</h2>
+        <p>This content is only visible to users with the "Permission 1" permission.</p>
       </div>
     )
   }
 
-  const EditComponent = () => {
+  const Permission2Component = () => {
     return (
       <div>
-        <h2>Edit Content</h2>
-        <p>This content is only visible to users with the "edit" role.</p>
+        <h2>Permission 2 Content</h2>
+        <p>This content is only visible to users with the "Permission 2" permission.</p>
       </div>
     )
   }
-
-  const AdminComponent = () => {
-    return (
-      <div>
-        <h2>Admin Content</h2>
-        <p>This content is only visible to users with the "admin" role.</p>
-      </div>
-    )
-  }
-
 
   return !user ? (
-    <>
-      <h1>Welcome</h1>
-      <form action={signIn}>
-        <input type="text" name="userName" placeholder="Username" required />
-        <button type="submit">Sign In</button>
-      </form>
-    </>
+    // Display sign-in form if user is not authenticated
+    <form action={signIn}>
+      <input type="text" name="username" placeholder="Username" required />
+      <button type="submit">Sign In</button>
+    </form>
   )
+  // Display user-specific content if user is authenticated
   : (
     <>
       <h1>Welcome {user.name}</h1>
-      {user.roles.includes('viewOnly') && <ViewOnlyComponent />}
-      {user.roles.includes('edit') && <EditComponent />}
-      {user.roles.includes('admin') && <AdminComponent />}
+      {user.permissions.includes('permission1') && <Permission1Component />}
+      {user.permissions.includes('permission2') && <Permission2Component />}
+      {!user.permissions.length && <p>You do not have permission to view any content</p>}
+      <form action={signOut}>
+        <button type="submit">Sign Out</button>
+      </form>
     </>
   )
 }

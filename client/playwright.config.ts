@@ -28,6 +28,7 @@ export default defineConfig({
 
   projects: [
     ...testUsers.map((user) => ({
+      // This can be used to see which user is being tested
       name: `${user.name} (${user.description})`,
       use: {
         ...devices['Desktop Chrome'],

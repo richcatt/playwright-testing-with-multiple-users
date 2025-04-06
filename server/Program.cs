@@ -1,49 +1,30 @@
-var builder = WebApplication.CreateBuilder(args);
+using System.Text.Json;
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing",
-    "Bracing",
-    "Chilly",
-    "Cool",
-    "Mild",
-    "Warm",
-    "Balmy",
-    "Hot",
-    "Sweltering",
-    "Scorching"
-};
+// Sign in endpoint
+app.MapPost("api/signin", (UserForm userForm) =>
+    {
+        var fileStream = File.OpenRead("../testData.json");
 
-app.MapGet("/weatherforecast",
-        () =>
-        {
-            var forecast = Enumerable.Range(1, 5)
-                .Select(index => new WeatherForecast(DateOnly.FromDateTime(DateTime.Now.AddDays(index)), Random.Shared.Next(-20, 55), summaries[Random.Shared.Next(summaries.Length)]))
-                .ToArray();
-            return forecast;
-        })
-    .WithName("GetWeatherForecast");
+        var users = JsonSerializer.Deserialize<IEnumerable<TestUser>>(fileStream);
+
+        return users?.FirstOrDefault(user => user.username == userForm.username);
+    })
+    .WithName("SignIn")
+    .DisableAntiforgery();
 
 app.Run();
 
-record WeatherForecast(
-    DateOnly Date,
-    int TemperatureC,
-    string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+record UserForm(
+    string username);
+
+record TestUser(
+    string name,
+    string description,
+    string username,
+    IEnumerable<string> permissions);

@@ -1,3 +1,30 @@
-{
-
-}
+[
+  {
+    "name": "User 1",
+    "description": "Permission 1 only",
+    "username": "user1@test.com",
+    "password": "password1",
+    "permissions": ["permission1"]
+  },
+  {
+    "name": "User 2",
+    "description": "Permission 2 only",
+    "username": "user2@test.com",
+    "password": "password2",
+    "permissions": ["permission2"]
+  },
+  {
+    "name": "User 3",
+    "description": "Permission 1 and 2",
+    "username": "user3@test.com",
+    "password": "password3",
+    "permissions": ["permission1", "permission2"]
+  },
+  {
+    "name": "User 4",
+    "description": "No permissions",
+    "username": "user4@test.com",
+    "password": "password4",
+    "permissions": []
+  }
+]

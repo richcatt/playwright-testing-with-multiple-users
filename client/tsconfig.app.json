@@ -20,7 +20,17 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
   },
-  "include": ["src"]
+  "include": ["src", "e2e"],
+  "exclude": [
+      "node_modules",
+      "dist",
+      "build",
+      "out-tsc",
+      "out-tsc-esm",
+      "**/*.spec.ts",
+      "**/*.test.ts",
+      "**/*.stories.tsx"
+  ]
 }

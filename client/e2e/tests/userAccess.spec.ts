@@ -5,23 +5,23 @@ import { authenticateAsUser } from '../helpers/auth'
 let page: Page
 
 test.beforeAll('authenticate', async ({ browser, user }) => {
+  // We're using a new page context for each user so there's no need to sign out
   page = await browser.newPage()
   await authenticateAsUser(user, page)
 })
 
-
-test('has username', async ({ page, user }) => {
-
-  console.log(user)
-  await expect(page).toHaveTitle(`Welcome ${user.name}`);
+test('shows welcome message for user', async ({ user }) => {
+  await expect(page.locator('h1')).toHaveText(`Welcome ${user.name}`)
 })
 
-// test('get started link', async ({ page }) => {
-//   await page.goto('https://playwright.dev/');
-//
-//   // Click the get started link.
-//   await page.getByRole('link', { name: 'Get started' }).click();
-//
-//   // Expects page to have a heading with the name of Installation.
-//   await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
-// });
+test('has correct access', async ({ user }) => {
+  if (user.permissions.includes('permission1')) {
+    await expect(page.getByText('Permission 1 content')).toBeVisible()
+  }
+  if (user.permissions.includes('permission2')) {
+    await expect(page.getByText('Permission 2 content')).toBeVisible()
+  }
+  if (!user.permissions.length) {
+    await expect(page.getByText('You do not have permission to view any content')).toBeVisible()
+  }
+})
